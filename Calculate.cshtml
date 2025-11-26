@@ -1,0 +1,300 @@
+﻿@using HeatExchangeApp.Models
+@model List<CalculationResult>
+@{
+    ViewData["Title"] = "Результаты расчета";
+    var parameters = ViewBag.Parameters as CalculationParameters;
+}
+
+<div class="container">
+    <h1>@ViewData["Title"]</h1>
+
+    @if (parameters == null)
+    {
+        <div class="alert alert-danger">
+            Параметры расчета не найдены!
+        </div>
+    }
+    else
+    {
+        <h4 class="mb-4">Название: @parameters.Name</h4>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5>Основные параметры</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <p><strong>Высота слоя, м:</strong><br>@parameters.LayerHeight</p>
+                                <p><strong>Объемный коэффициент теплоотдачи, Вт/(м³·К):</strong><br>@parameters.HeatTransferCoefficient</p>
+                                <p><strong>Скорость газа, м/с:</strong><br>@parameters.GasVelocity</p>
+                                <p><strong>Теплоемкость газа, кДж/(м³·К):</strong><br>@parameters.GasHeatCapacity</p>
+                                <p><strong>Расход материалов, кг/с:</strong><br>@parameters.MaterialConsumption</p>
+                            </div>
+                            <div class="col-6">
+                                <p><strong>Теплоемкость материалов, кДж/(кг·К):</strong><br>@parameters.MaterialHeatCapacity</p>
+                                <p><strong>Начальная температура материала, °C:</strong><br>@parameters.InitialMaterialTemp</p>
+                                <p><strong>Начальная температура газа, °C:</strong><br>@parameters.InitialGasTemp</p>
+                                <p><strong>Диаметр аппарата, м:</strong><br>@parameters.ApparatusDiameter</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="alert alert-warning">
+                Нет данных для отображения. Расчет не выполнен.
+            </div>
+        }
+        else
+        {
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5>Результаты расчета по высоте слоя</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th rowspan="2">Параметры</th>
+                                    <th colspan="@Model.Count" class="text-center">Координаты y, м</th>
+                                </tr>
+                                <tr>
+                                    @foreach (var result in Model)
+                                    {
+                                        <th class="text-center">@result.CoordinateY</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Относительная высота Y</strong></td>
+                                    @foreach (var result in Model)
+                                    {
+                                        <td class="text-center">@result.RelativeHeight</td>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td><strong>Числитель θ₁</strong></td>
+                                    @foreach (var result in Model)
+                                    {
+                                        <td class="text-center">@result.ExpCalculation1</td>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td><strong>Числитель θ₂</strong></td>
+                                    @foreach (var result in Model)
+                                    {
+                                        <td class="text-center">@result.ExpCalculation2</td>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td><strong>θ материала</strong></td>
+                                    @foreach (var result in Model)
+                                    {
+                                        <td class="text-center">@result.Theta1</td>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td><strong>θ газа</strong></td>
+                                    @foreach (var result in Model)
+                                    {
+                                        <td class="text-center">@result.Theta2</td>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td><strong>Темп. материала, °C</strong></td>
+                                    @foreach (var result in Model)
+                                    {
+                                        <td class="text-center">@result.MaterialTemp</td>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td><strong>Темп. газа, °C</strong></td>
+                                    @foreach (var result in Model)
+                                    {
+                                        <td class="text-center">@result.GasTemp</td>
+                                    }
+                                </tr>
+                                <tr>
+                                    <td><strong>Разность темп., °C</strong></td>
+                                    @foreach (var result in Model)
+                                    {
+                                        <td class="text-center">@result.TempDifference</td>
+                                    }
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header bg-warning text-dark">
+                            <h5>График изменения температур по высоте слоя</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="temperatureChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header bg-warning text-dark">
+                            <h5>График разности температур по высоте слоя</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="differenceChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+    <div class="mt-4">
+        <a asp-action="Index" class="btn btn-secondary">Назад к списку</a>
+        <a asp-action="Edit" asp-route-id="@parameters?.Id" class="btn btn-warning">Изменить параметры</a>
+        <a asp-action="Create" class="btn btn-primary">Новый расчет</a>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        @if (Model != null && Model.Any())
+        {
+                <text>
+                const coordinates = @Html.Raw(Json.Serialize(Model.Select(r => r.CoordinateY)));
+                const materialTemps = @Html.Raw(Json.Serialize(Model.Select(r => r.MaterialTemp)));
+                const gasTemps = @Html.Raw(Json.Serialize(Model.Select(r => r.GasTemp)));
+                const tempDifferences = @Html.Raw(Json.Serialize(Model.Select(r => r.TempDifference)));
+
+                const tempCtx = document.getElementById('temperatureChart').getContext('2d');
+                const temperatureChart = new Chart(tempCtx, {
+                    type: 'line',
+                    data: {
+                        labels: coordinates,
+                        datasets: [{
+                            label: 'Температура материала, °C',
+                            data: materialTemps,
+                            borderColor: 'red',
+                            backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                            borderWidth: 3,
+                            fill: false,
+                            tension: 0.4
+                        }, {
+                            label: 'Температура газа, °C',
+                            data: gasTemps,
+                            borderColor: 'blue',
+                            backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                            borderWidth: 3,
+                            fill: false,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Распределение температур по высоте слоя'
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Высота слоя, м',
+                                    font: {
+                                        size: 14,
+                                        weight: 'bold'
+                                    }
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Температура, °C',
+                                    font: {
+                                        size: 14,
+                                        weight: 'bold'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                const diffCtx = document.getElementById('differenceChart').getContext('2d');
+                const differenceChart = new Chart(diffCtx, {
+                    type: 'line',
+                    data: {
+                        labels: coordinates,
+                        datasets: [{
+                            label: 'Разность температур, °C',
+                            data: tempDifferences,
+                            borderColor: 'green',
+                            backgroundColor: 'rgba(0, 255, 0, 0.2)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Разность температур материала и газа'
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Высота слоя, м',
+                                    font: {
+                                        size: 14,
+                                        weight: 'bold'
+                                    }
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Разность температур, °C',
+                                    font: {
+                                        size: 14,
+                                        weight: 'bold'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                </text>
+        }
+        else
+        {
+                <text>
+                console.log("Нет данных для построения графиков");
+                </text>
+        }
+    </script>
+}

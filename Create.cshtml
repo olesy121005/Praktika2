@@ -1,0 +1,91 @@
+﻿@using HeatExchangeApp.Models
+@model CalculationParameters
+
+@{
+    ViewData["Title"] = "Создание расчета";
+}
+
+<div class="container">
+    <h1>@ViewData["Title"]</h1>
+
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" placeholder="Введите название расчета" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="LayerHeight" class="control-label"></label>
+                    <input asp-for="LayerHeight" class="form-control" placeholder="Например: 5" />
+                    <span asp-validation-for="LayerHeight" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="HeatTransferCoefficient" class="control-label"></label>
+                    <input asp-for="HeatTransferCoefficient" class="form-control" placeholder="Например: 2450" />
+                    <span asp-validation-for="HeatTransferCoefficient" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="GasVelocity" class="control-label"></label>
+                    <input asp-for="GasVelocity" class="form-control" placeholder="Например: 0.6" />
+                    <span asp-validation-for="GasVelocity" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="GasHeatCapacity" class="control-label"></label>
+                    <input asp-for="GasHeatCapacity" class="form-control" placeholder="Например: 1.34" />
+                    <span asp-validation-for="GasHeatCapacity" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="MaterialConsumption" class="control-label"></label>
+                    <input asp-for="MaterialConsumption" class="form-control" placeholder="Например: 1.7" />
+                    <span asp-validation-for="MaterialConsumption" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="MaterialHeatCapacity" class="control-label"></label>
+                    <input asp-for="MaterialHeatCapacity" class="form-control" placeholder="Например: 1.49" />
+                    <span asp-validation-for="MaterialHeatCapacity" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="InitialMaterialTemp" class="control-label"></label>
+                    <input asp-for="InitialMaterialTemp" class="form-control" placeholder="Например: 600" />
+                    <span asp-validation-for="InitialMaterialTemp" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="InitialGasTemp" class="control-label"></label>
+                    <input asp-for="InitialGasTemp" class="form-control" placeholder="Например: 20" />
+                    <span asp-validation-for="InitialGasTemp" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ApparatusDiameter" class="control-label"></label>
+                    <input asp-for="ApparatusDiameter" class="form-control" placeholder="Например: 2.1" />
+                    <span asp-validation-for="ApparatusDiameter" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group mt-3">
+            <button type="submit" class="btn btn-primary">Создать</button>
+            <a asp-action="Index" class="btn btn-secondary">Назад к списку</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
